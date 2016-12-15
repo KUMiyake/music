@@ -4,6 +4,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.JFrame;
+
+import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
@@ -16,7 +19,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public final class PlotWaveform {
 
 	/* 信号をプロットする */
-    public static final void plotWaveform(
+    public static final JFreeChart GenerateWaveformChart(
             final double[] waveform,
             final double sampleRate
     ) {
@@ -25,28 +28,20 @@ public final class PlotWaveform {
 
         final double[] times = IntStream.range(0, waveform.length).mapToDouble(i -> i / sampleRate).toArray();
 
-
 /*プロットする*/
 
-        final JFrame frame = Plot.plot(times, waveform);
-
-        final JFreeChart chart = ((ChartPanel) frame.getContentPane().getComponent(0)).getChart();
-
+        final JFreeChart chart = ChartFactory.createXYLineChart(
+                null,null,null,new SingleXYArrayDataset(times, waveform));
+        chart.removeLegend();
         chart.setTitle("Waveform");
-
         final XYPlot plot = chart.getXYPlot();
-
         final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-
         xAxis.setRange(0.0, (waveform.length - 1) / sampleRate);
-
         xAxis.setLabel("Time[sec.]");
-
         final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-
         yAxis.setRange(-1.0, 1.0);
-
         yAxis.setLabel("Amplitude");
+        return chart;
     }
 
     public static final void main(final String[] args)
@@ -65,6 +60,7 @@ public final class PlotWaveform {
         final AudioFormat format = stream.getFormat();
         final double sampleRate = format.getSampleRate();
         stream.close();
-        plotWaveform(waveform, sampleRate);
+
+        final JFrame frame = Plot.createJFrame(GenerateWaveformChart(waveform, sampleRate),"plot");
     }
 }
