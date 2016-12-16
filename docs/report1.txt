@@ -1,4 +1,4 @@
-\documentclass{jsarticle}
+ï»¿\documentclass{jsarticle}
 \usepackage[dvipdfmx]{graphicx}
 \usepackage{listings,jlisting}
 
@@ -22,29 +22,29 @@
   lineskip=-0.5ex%
 }
 
-\title{‰¹ºî•ñˆ—@‰Û‘è1}
-\author{O‘î@—åˆß}
+\title{éŸ³å£°æƒ…å ±å‡¦ç†ã€€èª²é¡Œ1}
+\author{ä¸‰å®…ã€€æ€œè¡£}
 \date{2016/12/16}
 
 \begin{document}
 \maketitle
 
-\section{À‘•“à—e}
-‰¹‹¿M†‰Â‹‰»GUI‚ğì¬‚µ‚½BÀ‘•‚µ‚½‹@”\‚ÍˆÈ‰º‚Ì’Ê‚è
+\section{å®Ÿè£…å†…å®¹}
+éŸ³éŸ¿ä¿¡å·å¯è¦–åŒ–GUIã‚’ä½œæˆã—ãŸã€‚å®Ÿè£…ã—ãŸæ©Ÿèƒ½ã¯ä»¥ä¸‹ã®é€šã‚Š
 \begin{enumerate}
-  \item ‰¹‹¿M†‚Ì”gŒ`
-  \item ‰¹‹¿M†‚ÌƒX‚ØƒNƒgƒƒOƒ‰ƒ€
-  \item ‰¹‹¿M†‚Ì‰¹—Ê‚ªŠÔ•Ï‰»‚·‚é—lq
-  \item ‰¹‹¿M†‚ÌÄ¶
+  \item éŸ³éŸ¿ä¿¡å·ã®æ³¢å½¢
+  \item éŸ³éŸ¿ä¿¡å·ã®ã‚¹ãºã‚¯ãƒˆãƒ­ã‚°ãƒ©ãƒ 
+  \item éŸ³éŸ¿ä¿¡å·ã®éŸ³é‡ãŒæ™‚é–“å¤‰åŒ–ã™ã‚‹æ§˜å­
+  \item éŸ³éŸ¿ä¿¡å·ã®å†ç”Ÿ
 \end{enumerate}
 
-\sectopm{ƒ\[ƒXƒR[ƒh}
-ƒ\[ƒXƒR[ƒh‚Í•¡”‚ÌƒNƒ‰ƒX‚É•ª‚©‚ê‚Ä‚¢‚éB
-ÀÛ‚É‹N“®‚³‚ê‚é‚Ì‚ÍSoundGUI‚Å‚ ‚èA‘¼‚ÌƒNƒ‰ƒX‚Í
-‰¹‹¿M†‚Ì•ªÍˆ—‚ğ’ñ‹Ÿ‚·‚éB
+\sectopm{ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰}
+ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã¯è¤‡æ•°ã®ã‚¯ãƒ©ã‚¹ã«åˆ†ã‹ã‚Œã¦ã„ã‚‹ã€‚
+å®Ÿéš›ã«èµ·å‹•ã•ã‚Œã‚‹ã®ã¯SoundGUIã§ã‚ã‚Šã€ä»–ã®ã‚¯ãƒ©ã‚¹ã¯
+éŸ³éŸ¿ä¿¡å·ã®åˆ†æå‡¦ç†ã‚’æä¾›ã™ã‚‹ã€‚
 
 \subsection{SoundGUI.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 
 
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
@@ -84,7 +84,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
         soundGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         soundGUI.setBounds(10, 10, 300, 200);
         soundGUI.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        soundGUI.setTitle("ƒ^ƒCƒgƒ‹");
+        soundGUI.setTitle("ã‚¿ã‚¤ãƒˆãƒ«");
         soundGUI.setVisible(true);
     }
 
@@ -106,7 +106,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
         buttonPanel.add(fileButton);
 
         fileNameLabel = new JLabel();
-        fileNameLabel.setText("ƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢");
+        fileNameLabel.setText("ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã—ã¦ãã ã•ã„");
 
         JPanel fileNamePanel = new JPanel();
         fileNamePanel.add(fileNameLabel);
@@ -132,7 +132,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
 
                 monitorPanel.removeAll();
                 JLabel loading_label = new JLabel();
-                loading_label.setText("“Ç‚İ‚İ’†");
+                loading_label.setText("èª­ã¿è¾¼ã¿ä¸­");
                 monitorPanel.add(loading_label);
                 monitorPanel.add(loading_label);
                 monitorPanel.add(loading_label);
@@ -141,9 +141,9 @@ public final class SoundGUI extends JFrame implements ActionListener{
                 LoadSoundData(currentFile);
 
             } else if (selected == JFileChooser.CANCEL_OPTION) {
-                fileNameLabel.setText("ƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½");
+                fileNameLabel.setText("ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸ");
             } else if (selected == JFileChooser.ERROR_OPTION) {
-                fileNameLabel.setText("ƒGƒ‰[‚Ü‚½‚Íæ‚èÁ‚µ‚ª‚ ‚è‚Ü‚µ‚½");
+                fileNameLabel.setText("ã‚¨ãƒ©ãƒ¼ã¾ãŸã¯å–ã‚Šæ¶ˆã—ãŒã‚ã‚Šã¾ã—ãŸ");
             }
         }
         else if(event.getSource() == playButton){
@@ -161,7 +161,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
             consolePanel.add(stopButton);
             consolePanel.add(playCountLabel);
 //            consolePanel.add(spectrumPanel);
-//            ¡Œã‚ÌŠg’£‚ÅÀ‘•—\’è‚Ì“®“I•\¦•”•ª
+//            ä»Šå¾Œã®æ‹¡å¼µã§å®Ÿè£…äºˆå®šã®å‹•çš„è¡¨ç¤ºéƒ¨åˆ†
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -186,7 +186,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
         }
     }
     void LoadSoundData(File wavFile){
-		/* ‰¹‹¿M†“Ç‚İ‚İ */
+		/* éŸ³éŸ¿ä¿¡å·èª­ã¿è¾¼ã¿ */
 		try {
             final AudioInputStream stream = AudioSystem
                     .getAudioInputStream(wavFile);
@@ -223,7 +223,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
 
 
 \subsection{SoundPlayer.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import jp.ac.kyoto_u.kuis.le4music.Player;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
@@ -261,7 +261,7 @@ public class SoundPlayer {
 
 
 \subsection{PlotWaveform.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import java.io.File;
 import java.util.stream.IntStream;
 import javax.sound.sampled.AudioSystem;
@@ -281,17 +281,17 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class PlotWaveform {
 
-	/* M†‚ğƒvƒƒbƒg‚·‚é */
+	/* ä¿¡å·ã‚’ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹ */
     public static final JFreeChart GenerateWaveformChart(
             final double[] waveform,
             final double sampleRate
     ) {
 
-/*ŠeƒTƒ“ƒvƒ‹‚Ì‚ğ‹‚ß‚é*/
+/*å„ã‚µãƒ³ãƒ—ãƒ«ã®æ™‚åˆ»ã‚’æ±‚ã‚ã‚‹*/
 
         final double[] times = IntStream.range(0, waveform.length).mapToDouble(i -> i / sampleRate).toArray();
 
-/*ƒvƒƒbƒg‚·‚é*/
+/*ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹*/
 
         final JFreeChart chart = ChartFactory.createXYLineChart(
                 null,null,null,new SingleXYArrayDataset(times, waveform));
@@ -316,7 +316,7 @@ public final class PlotWaveform {
         }
 
         final File wavFile = new File(args[0]);
-		/* ‰¹‹¿M†“Ç‚İ‚İ */
+		/* éŸ³éŸ¿ä¿¡å·èª­ã¿è¾¼ã¿ */
         final AudioInputStream stream = AudioSystem
                .getAudioInputStream(wavFile);
         final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
@@ -331,7 +331,7 @@ public final class PlotWaveform {
 
 
 \subsection{PlotVolume.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.IntStream;
@@ -352,27 +352,27 @@ import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class PlotVolume {
-    /*”gŒ`‚ğƒt[ƒŠƒG•ÏŠ·‚µCƒXƒyƒNƒgƒ‹‚ğ‘Î”(dB)ƒXƒP[ƒ‹‚Åƒvƒƒbƒg‚·‚é*/
+    /*æ³¢å½¢ã‚’ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ã—ï¼Œã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’å¯¾æ•°(dB)ã‚¹ã‚±ãƒ¼ãƒ«ã§ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹*/
 
     static int DIVIDE_SIZE = 1024;
 
-    //˜a‚ğŒvZ‚·‚é
+    //å’Œã‚’è¨ˆç®—ã™ã‚‹
     private static double getSigma(double[] spectrum){
         return Arrays.stream(spectrum).map(c -> c * c).sum();
     }
 
     private static double getVokumeValue(final double[] waveform, final double sampleRate){
-         /* M†‚Ì’·‚³‚ğfftSize‚ÉL‚Î‚µC’·‚³‚ª‘«‚è‚È‚¢•”•ª‚Í0‚Å–„‚ß‚éD  *U•‚ğM†’·‚Å³‹K‰»‚·‚éD */
+         /* ä¿¡å·ã®é•·ã•ã‚’fftSizeã«ä¼¸ã°ã—ï¼Œé•·ã•ãŒè¶³ã‚Šãªã„éƒ¨åˆ†ã¯0ã§åŸ‹ã‚ã‚‹ï¼  *æŒ¯å¹…ã‚’ä¿¡å·é•·ã§æ­£è¦åŒ–ã™ã‚‹ï¼ */
         final double[] src = Arrays.stream(Arrays.copyOf(waveform, DIVIDE_SIZE)).map(w -> w / waveform.length)
                 .toArray();
-         /*‘Î”U•ƒXƒyƒNƒgƒ‹‚ğ‹‚ß‚é*/
+         /*å¯¾æ•°æŒ¯å¹…ã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹*/
         return 20.0 * Math.log10(Math.sqrt(getSigma(src) / DIVIDE_SIZE));
     }
 
     public static final JFreeChart GenerateLoudnessChart(final double[] waveform, final double sampleRate) {
-         /* fftSize = 2?p >= waveform.length‚ğ–‚½‚·fftSize‚ğ‹‚ß‚é * 2?p‚ÍƒVƒtƒg‰‰Z‚Å‹‚ß‚ç‚ê‚é*/
+         /* fftSize = 2?p >= waveform.lengthã‚’æº€ãŸã™fftSizeã‚’æ±‚ã‚ã‚‹ * 2?pã¯ã‚·ãƒ•ãƒˆæ¼”ç®—ã§æ±‚ã‚ã‚‰ã‚Œã‚‹*/
         final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-         /* M†‚Ì’·‚³‚ğfftSize‚ÉL‚Î‚µC’·‚³‚ª‘«‚è‚È‚¢•”•ª‚Í0‚Å–„‚ß‚éD  *U•‚ğM†’·‚Å³‹K‰»‚·‚éD */
+         /* ä¿¡å·ã®é•·ã•ã‚’fftSizeã«ä¼¸ã°ã—ï¼Œé•·ã•ãŒè¶³ã‚Šãªã„éƒ¨åˆ†ã¯0ã§åŸ‹ã‚ã‚‹ï¼  *æŒ¯å¹…ã‚’ä¿¡å·é•·ã§æ­£è¦åŒ–ã™ã‚‹ï¼ */
         final double[] src = Arrays.stream(Arrays.copyOf(waveform, fftSize)).map(w -> w / waveform.length)
                 .toArray();
         int divide_num = fftSize / DIVIDE_SIZE;
@@ -381,10 +381,10 @@ public final class PlotVolume {
             loudness[i] = getVokumeValue(Arrays.copyOfRange(src,i * DIVIDE_SIZE, (i + 1) * DIVIDE_SIZE),sampleRate);
         }
 
-        /* ƒtƒŒ[ƒ€”‚ÆŠeƒtƒŒ[ƒ€æ“ªˆÊ’u‚Ì*/
+        /* ãƒ•ãƒ¬ãƒ¼ãƒ æ•°ã¨å„ãƒ•ãƒ¬ãƒ¼ãƒ å…ˆé ­ä½ç½®ã®æ™‚åˆ»*/
         final double[] times = IntStream.range(0, loudness.length).mapToDouble(i -> i * DIVIDE_SIZE / sampleRate).toArray();
 
-         /*ƒvƒƒbƒg‚·‚é*/
+         /*ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹*/
         final JFreeChart chart = ChartFactory.createXYLineChart(
                 null,null,null,new SingleXYArrayDataset(times, loudness));
 
@@ -409,7 +409,7 @@ public final class PlotVolume {
 
         }
         final File wavFile = new File(args[0]);
-        /*‰¹‹¿M†“Ç‚İ‚İ*/
+        /*éŸ³éŸ¿ä¿¡å·èª­ã¿è¾¼ã¿*/
         final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
         final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
         final AudioFormat format = stream.getFormat();
@@ -422,7 +422,7 @@ public final class PlotVolume {
 
 
 \subsection{PlotSpectrum.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.IntStream;
@@ -442,20 +442,20 @@ import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class PlotSpectrum {
-    /*”gŒ`‚ğƒt[ƒŠƒG•ÏŠ·‚µCƒXƒyƒNƒgƒ‹‚ğ‘Î”(dB)ƒXƒP[ƒ‹‚Åƒvƒƒbƒg‚·‚é*/
+    /*æ³¢å½¢ã‚’ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ã—ï¼Œã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’å¯¾æ•°(dB)ã‚¹ã‚±ãƒ¼ãƒ«ã§ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹*/
 
     public static final JFreeChart GenerateSpectrumChart(final double[] waveform, final double sampleRate) {
-         /* fftSize = 2?p >= waveform.length‚ğ–‚½‚·fftSize‚ğ‹‚ß‚é * 2?p‚ÍƒVƒtƒg‰‰Z‚Å‹‚ß‚ç‚ê‚é*/
+         /* fftSize = 2?p >= waveform.lengthã‚’æº€ãŸã™fftSizeã‚’æ±‚ã‚ã‚‹ * 2?pã¯ã‚·ãƒ•ãƒˆæ¼”ç®—ã§æ±‚ã‚ã‚‰ã‚Œã‚‹*/
         final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-         /* M†‚Ì’·‚³‚ğfftSize‚ÉL‚Î‚µC’·‚³‚ª‘«‚è‚È‚¢•”•ª‚Í0‚Å–„‚ß‚éD  *U•‚ğM†’·‚Å³‹K‰»‚·‚éD */
+         /* ä¿¡å·ã®é•·ã•ã‚’fftSizeã«ä¼¸ã°ã—ï¼Œé•·ã•ãŒè¶³ã‚Šãªã„éƒ¨åˆ†ã¯0ã§åŸ‹ã‚ã‚‹ï¼  *æŒ¯å¹…ã‚’ä¿¡å·é•·ã§æ­£è¦åŒ–ã™ã‚‹ï¼ */
         final double[] src = Arrays.stream(Arrays.copyOf(waveform, fftSize)).map(w -> w / waveform.length)
                 .toArray();
-         /*‚‘¬ƒt[ƒŠƒG•ÏŠ·‚ğs‚¤*/
+         /*é«˜é€Ÿãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ã‚’è¡Œã†*/
         final Complex[] spectrum = Le4MusicUtils.rfft(src);
-         /*‘Î”U•ƒXƒyƒNƒgƒ‹‚ğ‹‚ß‚é*/
+         /*å¯¾æ•°æŒ¯å¹…ã‚¹ãƒšã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹*/
         final double[] specLog = Arrays.stream(spectrum)
                 .mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray();
-         /*ü”g”‚ğ‹‚ß‚éDˆÈ‰º‚ğ–‚½‚·‚æ‚¤‚ÉüŒ^‚É*freqs[0] = 0Hz 48 * freqs[fftSize2 - 1] = sampleRate / 2 (= Nyquistü”g”) */
+         /*å‘¨æ³¢æ•°ã‚’æ±‚ã‚ã‚‹ï¼ä»¥ä¸‹ã‚’æº€ãŸã™ã‚ˆã†ã«ç·šå‹ã«*freqs[0] = 0Hz 48 * freqs[fftSize2 - 1] = sampleRate / 2 (= Nyquistå‘¨æ³¢æ•°) */
         final double[] freqs = IntStream.rangeClosed(0, fftSize >> 1)
                 .mapToDouble(i -> i * sampleRate / fftSize).toArray();
         return ChartFactory.createXYLineChart(
@@ -471,7 +471,7 @@ public final class PlotSpectrum {
 
         }
         final File wavFile = new File(args[0]);
-        /*‰¹‹¿M†“Ç‚İ‚İ*/
+        /*éŸ³éŸ¿ä¿¡å·èª­ã¿è¾¼ã¿*/
         final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
         final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
         final AudioFormat format = stream.getFormat();
@@ -485,7 +485,7 @@ public final class PlotSpectrum {
 
 
 \subsection{PlotSpectrogram.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import java.io.File;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -504,35 +504,35 @@ import jp.ac.kyoto_u.kuis.le4music.Plot;
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public final class PlotSpectrogram {  /*”gŒ`‚ğ’ZŠÔƒt[ƒŠƒG•ÏŠ·‚µCƒXƒyƒNƒgƒƒOƒ‰ƒ€‚ğƒvƒƒbƒg‚·‚é*/
+public final class PlotSpectrogram {  /*æ³¢å½¢ã‚’çŸ­æ™‚é–“ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ã—ï¼Œã‚¹ãƒšã‚¯ãƒˆãƒ­ã‚°ãƒ©ãƒ ã‚’ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹*/
 
     public static final JFreeChart GenerateSpectrogramChart(
             final double[] waveform,
             final double sampleRate,
             final double windowDuration,
             final double windowShift) {
-         /* ‘‹ŠÖ”‚ÆFFT‚ÌƒTƒ“ƒvƒ‹” */
+         /* çª“é–¢æ•°ã¨FFTã®ã‚µãƒ³ãƒ—ãƒ«æ•° */
         final int windowSize = (int) Math.round(windowDuration * sampleRate);
         final int fftSize = 1 << Le4MusicUtils.nextPow2(windowSize);
-         /* ƒVƒtƒg‚ÌƒTƒ“ƒvƒ‹” */
+         /* ã‚·ãƒ•ãƒˆã®ã‚µãƒ³ãƒ—ãƒ«æ•° */
         final int shiftSize = (int) Math.round(windowShift * sampleRate);
-         /* ‘‹ŠÖ”‚ğ‹‚ßC‚»‚ê‚ğ³‹K‰»‚·‚é*/
+         /* çª“é–¢æ•°ã‚’æ±‚ã‚ï¼Œãã‚Œã‚’æ­£è¦åŒ–ã™ã‚‹*/
 
         final double[] window = MathArrays.normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(windowSize), fftSize), 1.0);
-         /* Šeƒt[ƒŠƒG•ÏŠ·ŒW”‚É‘Î‰‚·‚éü”g”*/
+         /* å„ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›ä¿‚æ•°ã«å¯¾å¿œã™ã‚‹å‘¨æ³¢æ•°*/
         final double[] freqs = IntStream.rangeClosed(0, fftSize / 2)
                 .mapToDouble(i -> i * sampleRate / fftSize).toArray();
-         /*’ZŠÔƒt[ƒŠƒG•ÏŠ·–{‘Ì*/
+         /*çŸ­æ™‚é–“ãƒ•ãƒ¼ãƒªã‚¨å¤‰æ›æœ¬ä½“*/
         final Stream<Complex[]> spectrogram =
                 Le4MusicUtils.sliding(waveform, window, shiftSize).map(frame -> Le4MusicUtils.rfft(frame));
-         /*•¡‘fƒXƒyƒNƒgƒƒOƒ‰ƒ€‚ğ‘Î”U•ƒXƒyƒNƒgƒƒOƒ‰ƒ€‚É */
+         /*è¤‡ç´ ã‚¹ãƒšã‚¯ãƒˆãƒ­ã‚°ãƒ©ãƒ ã‚’å¯¾æ•°æŒ¯å¹…ã‚¹ãƒšã‚¯ãƒˆãƒ­ã‚°ãƒ©ãƒ ã« */
         final double[][] specLog =
                 spectrogram.map(sp -> Arrays.stream(sp)
                         .mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray()).toArray(n -> new double[n][]);
-        /* ƒtƒŒ[ƒ€”‚ÆŠeƒtƒŒ[ƒ€æ“ªˆÊ’u‚Ì*/
+        /* ãƒ•ãƒ¬ãƒ¼ãƒ æ•°ã¨å„ãƒ•ãƒ¬ãƒ¼ãƒ å…ˆé ­ä½ç½®ã®æ™‚åˆ»*/
         final double[] times = IntStream.range(0, specLog.length)
                 .mapToDouble(i -> i * windowShift).toArray();
-         /* ƒvƒƒbƒg*/
+         /* ãƒ—ãƒ­ãƒƒãƒˆ*/
 
          JFreeChart chart = ChartGenerator.chartGenerate(specLog, times, freqs, "Time [sec.]", "Frequency [Hz]", -100.0, 0.0, true);
          chart.setTitle("Spectrogram");
@@ -548,7 +548,7 @@ public final class PlotSpectrogram {  /*”gŒ`‚ğ’ZŠÔƒt[ƒŠƒG•ÏŠ·‚µCƒXƒyƒNƒgƒƒO
 
         }
         final File wavFile = new File(args[0]);
-        /* ‰¹‹¿M†“Ç‚İ‚İ */
+        /* éŸ³éŸ¿ä¿¡å·èª­ã¿è¾¼ã¿ */
         final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
         final AudioFormat format = stream.getFormat();
         final double sampleRate = format.getSampleRate();
@@ -562,7 +562,7 @@ public final class PlotSpectrogram {  /*”gŒ`‚ğ’ZŠÔƒt[ƒŠƒG•ÏŠ·‚µCƒXƒyƒNƒgƒƒO
 
 
 \subsection{ChartGenerator.java}
-\begin{lstlisting}[caption=‚Ù‚°‚Ù‚°,label=‚Ù‚°]
+\begin{lstlisting}[caption=ã»ã’ã»ã’,label=ã»ã’]
 import jp.ac.kyoto_u.kuis.le4music.HotPaintScale;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
@@ -572,7 +572,7 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.MatrixSeries;
 import org.jfree.data.xy.MatrixSeriesCollection;
 
-//Chart‚ğ¶¬‚·‚éƒNƒ‰ƒXB
+//Chartã‚’ç”Ÿæˆã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
 public class ChartGenerator {
 
     private static final MatrixSeries buildMatrixSeries(
@@ -611,7 +611,7 @@ public class ChartGenerator {
         final MatrixSeries ms = buildMatrixSeries(z, size1, size2, transpose);
         final MatrixSeriesCollection msc = new MatrixSeriesCollection(ms);
 
-    /* ƒvƒƒbƒg‚Ì² */
+    /* ãƒ—ãƒ­ãƒƒãƒˆã®è»¸ */
         final NumberAxis axis1a = new NumberAxis(xAxisTitle + "-index");
         axis1a.setLowerMargin(0.0);
         axis1a.setUpperMargin(0.0);
@@ -628,11 +628,11 @@ public class ChartGenerator {
         axis2b.setLowerBound(y[0]);
         axis2b.setUpperBound(y[size2 - 1]);
 
-    /* ƒŒƒ“ƒ_ƒ‰i’l‚ÆF‚Ì‘Î‰ŠÖŒWj */
+    /* ãƒ¬ãƒ³ãƒ€ãƒ©ï¼ˆå€¤ã¨è‰²ã®å¯¾å¿œé–¢ä¿‚ï¼‰ */
         final XYBlockRenderer renderer = new XYBlockRenderer();
         renderer.setPaintScale(new HotPaintScale(zMin, zMax));
 
-    /* JFreeChart‚Ì²•\¦‚ÉŠÖ‚·‚éƒoƒO‚Ö‚Ì‘Îô */
+    /* JFreeChartã®è»¸è¡¨ç¤ºã«é–¢ã™ã‚‹ãƒã‚°ã¸ã®å¯¾ç­– */
         final XYPlot plot = new XYPlot(msc, axis1a, axis2a, renderer);
         final String axisType = "NORMAL"; /* NORMAL | INDEX | BOTH */
         switch (axisType) {
@@ -661,20 +661,20 @@ public class ChartGenerator {
 }
 \end{lstlisting}
 
-\section{g‚¢•û}
+\section{ä½¿ã„æ–¹}
 \begin{center}
 \includegraphics[width=6cm]{window.jpg}
 \end{center}
-\subsection{ƒtƒ@ƒCƒ‹‚ğŠJ‚­}
-¶ã‚Ìufile selectv‚ğƒNƒŠƒbƒN‚µ‚ÄAŠJ‚«‚½‚¢ƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚·‚éB
-\subsection{ƒtƒ@ƒCƒ‹‚ğÄ¶‚·‚é}
-ufile selectv‚Ì‰º‚É‚ ‚éuPlayv‚ğƒNƒŠƒbƒN
-\subsection{ŠeƒEƒBƒ“ƒhƒE‚Ìà–¾}
+\subsection{ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã}
+å·¦ä¸Šã®ã€Œfile selectã€ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ã¦ã€é–‹ããŸã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠã™ã‚‹ã€‚
+\subsection{ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å†ç”Ÿã™ã‚‹}
+ã€Œfile selectã€ã®ä¸‹ã«ã‚ã‚‹ã€ŒPlayã€ã‚’ã‚¯ãƒªãƒƒã‚¯
+\subsection{å„ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®èª¬æ˜}
 \subsubsection{Waveform}
-”gŒ`‚ğ•\¦‚µ‚Ü‚·
+æ³¢å½¢ã‚’è¡¨ç¤ºã—ã¾ã™
 \subsubsection{Spectrogram}
-ƒX‚ØƒNƒgƒƒOƒ‰ƒ€‚ğ•\¦‚µ‚Ü‚·
+ã‚¹ãºã‚¯ãƒˆãƒ­ã‚°ãƒ©ãƒ ã‚’è¡¨ç¤ºã—ã¾ã™
 \subsubsection{Loudness}
-ƒ{ƒŠƒ…[ƒ€‚ğ•\¦‚µ‚Ü‚·
+ãƒœãƒªãƒ¥ãƒ¼ãƒ ã‚’è¡¨ç¤ºã—ã¾ã™
 
 \end{document}
