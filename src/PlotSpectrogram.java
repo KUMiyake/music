@@ -7,22 +7,11 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.JFrame;
 
-import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
-import jp.ac.kyoto_u.kuis.le4music.HotPaintScale;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartPanel;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.util.MathArrays;
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Plot;
-
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.data.xy.MatrixSeries;
-import org.jfree.data.xy.MatrixSeriesCollection;
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;

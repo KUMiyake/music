@@ -7,15 +7,12 @@ import javax.sound.sampled.AudioInputStream;
 import javax.swing.JFrame;
 
 import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
-import org.apache.commons.math3.complex.Complex;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.axis.NumberAxis;
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Plot;
-import sun.nio.cs.ext.MacThai;
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -25,6 +22,7 @@ public final class PlotVolume {
 
     static int DIVIDE_SIZE = 1024;
 
+    //和を計算する
     private static double getSigma(double[] spectrum){
         return Arrays.stream(spectrum).map(c -> c * c).sum();
     }

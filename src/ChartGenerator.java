@@ -7,9 +7,7 @@ import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.MatrixSeries;
 import org.jfree.data.xy.MatrixSeriesCollection;
 
-/**
- * Created by a-rusi on 2016/12/02.
- */
+//Chartを生成するクラス。
 public class ChartGenerator {
 
     private static final MatrixSeries buildMatrixSeries(

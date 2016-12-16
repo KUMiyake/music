@@ -7,9 +7,6 @@ import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by a-rusi on 2016/12/02.
- */
 public class SoundPlayer {
 
     static public void main(final String[] args) throws IOException, UnsupportedAudioFileException,javax.sound.sampled.LineUnavailableException

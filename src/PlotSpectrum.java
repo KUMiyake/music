@@ -10,9 +10,6 @@ import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
 import org.apache.commons.math3.complex.Complex;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.axis.NumberAxis;
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Plot;
 
@@ -36,21 +33,6 @@ public final class PlotSpectrum {
          /*周波数を求める．以下を満たすように線型に*freqs[0] = 0Hz 48 * freqs[fftSize2 - 1] = sampleRate / 2 (= Nyquist周波数) */
         final double[] freqs = IntStream.rangeClosed(0, fftSize >> 1)
                 .mapToDouble(i -> i * sampleRate / fftSize).toArray();
-         /*プロットする*/
-//         JFreeChart chart = ChartFactory.createXYLineChart(
-//                 null,null,null,new SingleXYArrayDataset(freqs, specLog));
-//        chart.setTitle("Spectrum");
-//
-//        final XYPlot plot = chart.getXYPlot();
-//        final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-//        xAxis.setRange(0.0, 0.5 * sampleRate);
-//        xAxis.setLabel("Frequency [Hz]");
-//
-//        final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-//        yAxis.setLabel("Amplitude [dB]");
-//        yAxis.setAutoRangeIncludesZero(false);
-//
-//        return chart;
         return ChartFactory.createXYLineChart(
                 null,null,null,new SingleXYArrayDataset(freqs, specLog));
     }

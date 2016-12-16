@@ -1,6 +1,4 @@
-/**
- * Created by a-rusi on 2016/12/01.
- */
+
 
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Player;
@@ -116,6 +114,7 @@ public final class SoundGUI extends JFrame implements ActionListener{
             consolePanel.add(stopButton);
             consolePanel.add(playCountLabel);
 //            consolePanel.add(spectrumPanel);
+//            今後の拡張で実装予定の動的表示部分
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {

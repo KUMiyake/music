@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.axis.NumberAxis;
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
