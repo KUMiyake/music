@@ -1,6 +1,6 @@
 \documentclass{jsarticle}
 \usepackage[dvipdfmx]{graphicx}
-usepackage{listings,jlisting}
+\usepackage{listings,jlisting}
 
 \lstset{%
   language={C},
