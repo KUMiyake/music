@@ -667,9 +667,6 @@ public class ChartGenerator {
 \end{lstlisting}
 
 \section{使い方}
-\begin{center}
-\includegraphics[width=18cm]{window.jpg}
-\end{center}
 \subsection{ファイルを開く}
 左上の「file select」をクリックして、開きたいファイルを選択する。
 \subsection{ファイルを再生する}
@@ -681,5 +678,18 @@ public class ChartGenerator {
 スぺクトログラムを表示します
 \subsubsection{Loudness}
 ボリュームを表示します
+
+\section{実験}
+\subsection{実験内容}
+「あ、い、う、え、お」
+と発音された音声ファイルを読み込ませ、その波形やスペクトログラムを観察する。
+\subsection{結果}
+以下のような出力が得られた
+
+\begin{center}
+\includegraphics[width=18cm]{window.jpg}
+\end{center}
+
+
 
 \end{document}

@@ -39,7 +39,7 @@ public final class PlotVolume {
          /* fftSize = 2ˆp >= waveform.lengthを満たすfftSizeを求める * 2ˆpはシフト演算で求められる*/
         final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
          /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
-        final double[] src = Arrays.stream(Arrays.copyOf(waveform, fftSize)).map(w -> w / waveform.length)
+        final double[] src = Arrays.stream(Arrays.copyOf(wggggggggggggaveform, fftSize)).map(w -> w / waveform.length)
                 .toArray();
         int divide_num = fftSize / DIVIDE_SIZE;
         double[] loudness = new double[divide_num];
