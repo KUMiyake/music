@@ -1,7 +1,9 @@
-
-
+/**
+ * Created by a-rusi on 2017/01/05.
+ */
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Player;
+import jp.ac.kyoto_u.kuis.le4music.Recorder;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
@@ -13,7 +15,7 @@ import java.io.File;
 import java.awt.event.*;
 import java.io.IOException;
 
-public final class SoundGUI extends JFrame implements ActionListener{
+public final class Karaoke extends JFrame implements ActionListener{
 
     JLabel fileNameLabel;
     JPanel globalPanel;
@@ -25,20 +27,21 @@ public final class SoundGUI extends JFrame implements ActionListener{
     JButton stopButton;
     JLabel playCountLabel;
     Player player;
+    Recorder recorder;
     File currentFile;
 
     public static void main(final String[] args){
-        SoundGUI soundGUI = new SoundGUI();
+        Karaoke  karaoke = new  Karaoke();
 
 
-        soundGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        soundGUI.setBounds(10, 10, 300, 200);
-        soundGUI.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        soundGUI.setTitle("タイトル");
-        soundGUI.setVisible(true);
+        karaoke.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        karaoke.setBounds(10, 10, 300, 200);
+        karaoke.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        karaoke.setTitle("タイトル");
+        karaoke.setVisible(true);
     }
 
-    SoundGUI(){
+    Karaoke(){
         fileButton = new JButton("file select");
         playButton = new JButton("Play");
         stopButton = new JButton("Stop");
@@ -71,7 +74,8 @@ public final class SoundGUI extends JFrame implements ActionListener{
         globalPanel.add(monitorPanel);
         getContentPane().add(globalPanel, BorderLayout.CENTER);
     }
-    public void actionPerformed(ActionEvent event){
+    public void actionPerformed(ActionEvent event)
+            {
         if(event.getSource() == fileButton) {
             JFileChooser fileChooser = new JFileChooser();
 
@@ -88,6 +92,14 @@ public final class SoundGUI extends JFrame implements ActionListener{
                 monitorPanel.add(loading_label);
                 monitorPanel.add(loading_label);
 
+                try {
+                    player = Player.newPlayer(currentFile);
+                    Mixer.Info[] mixerInfo=AudioSystem.getMixerInfo();
+                    recorder = Recorder.newRecorder(16000.0 ,0.4,mixerInfo[3],new File("out_w.wav"));
+                }
+                catch(IOException | UnsupportedAudioFileException | javax.sound.sampled.LineUnavailableException e){
+
+                }
                 LoadSoundData(currentFile);
 
             } else if (selected == JFileChooser.CANCEL_OPTION) {
@@ -100,7 +112,6 @@ public final class SoundGUI extends JFrame implements ActionListener{
 //            if(!player.isRunning())
 //            player.stop();
 
-            player.start();
             consolePanel.removeAll();
             consolePanel.add(stopButton);
             consolePanel.add(playCountLabel);
@@ -129,21 +140,26 @@ public final class SoundGUI extends JFrame implements ActionListener{
             player.stop();
         }
     }
-    void LoadSoundData(File wavFile){
+    void LoadSoundData(File wavFile)
+    {
 		/* 音響信号読み込み */
-		try {
+        try {
             final AudioInputStream stream = AudioSystem
                     .getAudioInputStream(wavFile);
             final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
             final AudioFormat format = stream.getFormat();
             final double sampleRate = format.getSampleRate();
             stream.close();
-            player = Player.newPlayer(wavFile);
-            JFreeChart waveformChart = PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
+
+            JFreeChart waveformChart =
+                    MonitorRecorder.GenerateSpectrogramMonitorChart(recorder);
+//                    PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
             JFreeChart spectrogramChart =
                     MonitorSpectrogram.GenerateSpectrogramMonitorChart(player);
+
 //                    PlotSpectrogram.GenerateSpectrogramChart(
 //                    waveform, sampleRate, Le4MusicUtils.frameDuration, Le4MusicUtils.shiftDuration);
+//
             JFreeChart volumeChart = PlotVolume.GenerateLoudnessChart(waveform, sampleRate);
             monitorPanel.removeAll();
 
@@ -154,13 +170,16 @@ public final class SoundGUI extends JFrame implements ActionListener{
 
             monitorPanel.add(consolePanel);
             monitorPanel.add(new ChartPanel(waveformChart));
-            monitorPanel.add(new ChartPanel(spectrogramChart));
             monitorPanel.add(new ChartPanel(volumeChart));
+            monitorPanel.add(new ChartPanel(spectrogramChart));
+
+
+            player.start();
 
             invalidate();
             validate();
         }
-        catch(IOException | UnsupportedAudioFileException |LineUnavailableException e){
+        catch(IOException | UnsupportedAudioFileException e){
 
         }
     }
