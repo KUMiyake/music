@@ -8,11 +8,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
 
+import jp.ac.kyoto_u.kuis.le4music.Plot;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.util.MathArrays;
 
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.axis.NumberAxis;
@@ -135,7 +138,7 @@ public final class MonitorRecorder {
     /* シフト長＝フレーム長の8分の1 */
         final double shiftDuration = frameDuration / 8.0;
         final double duration = Default.duration;
-        final double freqMax = Default.freqMax;
+        final double freqMax = Default.freqMax * 2;
 
         final int frames = (int)(duration / shiftDuration);
 
@@ -184,7 +187,7 @@ public final class MonitorRecorder {
                 spgPlot.setRangeAxis(1, freqAxis1);
                 spgPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
                 spgPlot.getDomainAxis().setVisible(false);
-                spgPlot.getRangeAxis().setVisible(false);;
+                spgPlot.getRangeAxis().setVisible(false);
                 break;
         }
 
@@ -212,11 +215,23 @@ public final class MonitorRecorder {
         return spgChart;
     }
 
-    public final void run(final String[] args)
+    public static final void run()
             throws IOException,
             ParseException,
             UnsupportedAudioFileException,
             LineUnavailableException {
+
+        Mixer.Info[] mixerInfo= AudioSystem.getMixerInfo();
+        //mike=2 録音デバイスから有効にする必要あり
+        Recorder recorder = Recorder.newRecorder(16000.0 ,0.4,mixerInfo[3],new File("out_w.wav"));
+        JFreeChart spectrogramChart =
+                GenerateSpectrogramMonitorChart(recorder);
+        recorder.start();
+        final JFrame wfFrame = new JFrame("Recording");
+        wfFrame.add(new ChartPanel(spectrogramChart));
+        wfFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        wfFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        wfFrame.setVisible(true);
 
 
     /* ウィンドウ描画がひと通り完了してから再生を開始する */
@@ -228,7 +243,7 @@ public final class MonitorRecorder {
             ParseException,
             UnsupportedAudioFileException,
             LineUnavailableException {
-        new MonitorSpectrogram().run(args);
+        run();
     }
 
 }

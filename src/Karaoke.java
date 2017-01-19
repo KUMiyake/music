@@ -9,6 +9,7 @@ import org.jfree.chart.JFreeChart;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,6 +20,7 @@ public final class Karaoke extends JFrame implements ActionListener{
 
     JLabel fileNameLabel;
     JPanel globalPanel;
+    JPanel buttonPanel;
     JPanel consolePanel;
     JPanel spectrumPanel;
     JPanel monitorPanel;
@@ -27,6 +29,8 @@ public final class Karaoke extends JFrame implements ActionListener{
     JButton stopButton;
     JLabel playCountLabel;
     Player player;
+    JLabel lyricsLabel;
+    JLabel noteLabel;
     Recorder recorder;
     File currentFile;
 
@@ -37,7 +41,7 @@ public final class Karaoke extends JFrame implements ActionListener{
         karaoke.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         karaoke.setBounds(10, 10, 300, 200);
         karaoke.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        karaoke.setTitle("タイトル");
+        karaoke.setTitle("カラオケシステム");
         karaoke.setVisible(true);
     }
 
@@ -55,8 +59,10 @@ public final class Karaoke extends JFrame implements ActionListener{
         spectrumPanel = new JPanel();
         globalPanel.setLayout(new BoxLayout(globalPanel, BoxLayout.PAGE_AXIS));
         monitorPanel.setLayout(new GridLayout(2,2));
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.add(fileButton);
+//        buttonPanel.add(playButton);
+//        playButton.setBounds(0,0,120,40);
 
         fileNameLabel = new JLabel();
         fileNameLabel.setText("ファイルを選択してください");
@@ -96,6 +102,10 @@ public final class Karaoke extends JFrame implements ActionListener{
                     player = Player.newPlayer(currentFile);
                     Mixer.Info[] mixerInfo=AudioSystem.getMixerInfo();
                     recorder = Recorder.newRecorder(16000.0 ,0.4,mixerInfo[3],new File("out_w.wav"));
+
+                    lyricsLabel = PlotScore.generateLyricsLabel(player);
+                    noteLabel = PlotPitch.generatePitchMonitorLabel();
+                    playCountLabel = PlotScore.generatePositionLabel();
                 }
                 catch(IOException | UnsupportedAudioFileException | javax.sound.sampled.LineUnavailableException e){
 
@@ -114,7 +124,6 @@ public final class Karaoke extends JFrame implements ActionListener{
 
             consolePanel.removeAll();
             consolePanel.add(stopButton);
-            consolePanel.add(playCountLabel);
 //            consolePanel.add(spectrumPanel);
 //            今後の拡張で実装予定の動的表示部分
             Thread thread = new Thread(new Runnable() {
@@ -151,31 +160,37 @@ public final class Karaoke extends JFrame implements ActionListener{
             final double sampleRate = format.getSampleRate();
             stream.close();
 
-            JFreeChart waveformChart =
-                    MonitorRecorder.GenerateSpectrogramMonitorChart(recorder);
-//                    PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
             JFreeChart spectrogramChart =
                     MonitorSpectrogram.GenerateSpectrogramMonitorChart(player);
+//                    PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
+            JFreeChart pitchChart =
+                    PlotPitch.generatePitchRecorderMonitor(recorder);
+//                    MonitorSpectrogram.GenerateSpectrogramMonitorChart(player);
 
 //                    PlotSpectrogram.GenerateSpectrogramChart(
 //                    waveform, sampleRate, Le4MusicUtils.frameDuration, Le4MusicUtils.shiftDuration);
 //
-            JFreeChart volumeChart = PlotVolume.GenerateLoudnessChart(waveform, sampleRate);
+            JFreeChart volumeChart =
+                    MonitorRecorder.GenerateSpectrogramMonitorChart(recorder);
+//                    PlotVolume.GenerateLoudnessChart(waveform, sampleRate);
             monitorPanel.removeAll();
 
             consolePanel = new JPanel();
-            consolePanel.setLayout(null);
-            consolePanel.add(playButton);
-            playButton.setBounds(0,0,120,40);
+            noteLabel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+            lyricsLabel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            consolePanel.setLayout(new BorderLayout());
+            consolePanel.add(noteLabel,BorderLayout.CENTER);
+            consolePanel.add(lyricsLabel,BorderLayout.PAGE_END);
+            consolePanel.add(playCountLabel,BorderLayout.PAGE_START);
 
             monitorPanel.add(consolePanel);
-            monitorPanel.add(new ChartPanel(waveformChart));
-            monitorPanel.add(new ChartPanel(volumeChart));
             monitorPanel.add(new ChartPanel(spectrogramChart));
+            monitorPanel.add(new ChartPanel(volumeChart));
+            monitorPanel.add(new ChartPanel(pitchChart));
 
 
             player.start();
-
+            recorder.start();
             invalidate();
             validate();
         }

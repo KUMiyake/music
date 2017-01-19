@@ -27,7 +27,7 @@ public final class PlotVolume {
         return Arrays.stream(spectrum).map(c -> c * c).sum();
     }
 
-    private static double getVokumeValue(final double[] waveform, final double sampleRate){
+    public static double getVolumeValue(final double[] waveform){
          /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
         final double[] src = Arrays.stream(Arrays.copyOf(waveform, DIVIDE_SIZE)).map(w -> w / waveform.length)
                 .toArray();
@@ -44,7 +44,7 @@ public final class PlotVolume {
         int divide_num = fftSize / DIVIDE_SIZE;
         double[] loudness = new double[divide_num];
         for(int i = 0; i < divide_num ;i++){
-            loudness[i] = getVokumeValue(Arrays.copyOfRange(src,i * DIVIDE_SIZE, (i + 1) * DIVIDE_SIZE),sampleRate);
+            loudness[i] = getVolumeValue(Arrays.copyOfRange(src,i * DIVIDE_SIZE, (i + 1) * DIVIDE_SIZE));
         }
 
         /* フレーム数と各フレーム先頭位置の時刻*/

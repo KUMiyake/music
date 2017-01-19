@@ -41,7 +41,7 @@ public final class MonitorWaveform {
         options.addOption("m", "mixer", true,
                 "Index of the Mixer object that supplies a SourceDataLine object. " +
                         "To check the proper index, use CheckAudioSystem");
-        options.addOption("u", "update-interval", true,
+        options.addOption("u", "u1pdate-interval", true,
                 "Interval of frame update [milliseconds]");
         options.addOption("b", "buffer", true, "duration of buffer [seconds]");
         options.addOption("f", "frame", true, "Duration of frame [seconds]");
@@ -105,8 +105,5 @@ public final class MonitorWaveform {
       /* delay = */ 1L,
                 TimeUnit.MILLISECONDS
         );
-
-
     }
-
 }

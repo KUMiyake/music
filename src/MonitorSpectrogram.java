@@ -135,7 +135,7 @@ public final class MonitorSpectrogram {
     /* シフト長＝フレーム長の8分の1 */
         final double shiftDuration = frameDuration / 8.0;
         final double duration = Default.duration;
-        final double freqMax = Default.freqMax;
+        final double freqMax = Default.freqMax * 2;
 
         final int frames = (int)(duration / shiftDuration);
 
@@ -184,7 +184,7 @@ public final class MonitorSpectrogram {
                 spgPlot.setRangeAxis(1, freqAxis1);
                 spgPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
                 spgPlot.getDomainAxis().setVisible(false);
-                spgPlot.getRangeAxis().setVisible(false);;
+                spgPlot.getRangeAxis().setVisible(false);
                 break;
         }
 

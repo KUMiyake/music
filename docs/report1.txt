@@ -22,50 +22,55 @@
   lineskip=-0.5ex%
 }
 
-\title{音声情報処理　課題1}
+\title{音声情報処理　課題2}
 \author{三宅　怜衣}
-\date{2016/12/16}
+\date{2017/01/19}
 
 \begin{document}
 \maketitle
 
 \section{実装内容}
-音響信号可視化GUIを作成した。実装した機能は以下の通り
+音楽ファイルを再生しながら、マイク入力をモニターする。実装した機能は以下の通り
 \begin{enumerate}
-  \item 音響信号の波形
-  \item 音響信号のスぺクトログラム
-  \item 音響信号の音量が時間変化する様子
-  \item 音響信号の再生
+  \item 音楽プレイヤーとレコーダーの同時実行
+  \item プレイヤーのスぺクトログラム表示
+  \item レコーダーのピッチ表示
+  \item レコーダーのスぺクトログラム表示
+  \item レコーダーのノート名を表示
+  \item 歌詞を表示
 \end{enumerate}
 
 \section{ソースコード}
 ソースコードは複数のクラスに分かれている。
-実際に起動されるのはSoundGUIであり、他のクラスは
-音響信号の分析処理を提供する。
+実際に起動されるのはKaraokeであり、他のクラスは
+音響信号の分析処理や、再生機能などを提供する
 
-\subsection{SoundGUI.java}
+\subsection{Karaoke.java}
 GUIを提供
 \begin{lstlisting}[caption=SoundGUI.java,label=SoundGUI]
+/**
+ * Created by a-rusi on 2017/01/05.
+ */
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
 import jp.ac.kyoto_u.kuis.le4music.Player;
+import jp.ac.kyoto_u.kuis.le4music.Recorder;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.awt.event.*;
 import java.io.IOException;
 
-public final class SoundGUI extends JFrame implements ActionListener{
+public final class Karaoke extends JFrame implements ActionListener{
 
     JLabel fileNameLabel;
     JPanel globalPanel;
+    JPanel buttonPanel;
     JPanel consolePanel;
     JPanel spectrumPanel;
     JPanel monitorPanel;
@@ -74,20 +79,23 @@ public final class SoundGUI extends JFrame implements ActionListener{
     JButton stopButton;
     JLabel playCountLabel;
     Player player;
+    JLabel lyricsLabel;
+    JLabel noteLabel;
+    Recorder recorder;
     File currentFile;
 
     public static void main(final String[] args){
-        SoundGUI soundGUI = new SoundGUI();
+        Karaoke  karaoke = new  Karaoke();
 
 
-        soundGUI.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        soundGUI.setBounds(10, 10, 300, 200);
-        soundGUI.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        soundGUI.setTitle("タイトル");
-        soundGUI.setVisible(true);
+        karaoke.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        karaoke.setBounds(10, 10, 300, 200);
+        karaoke.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        karaoke.setTitle("カラオケシステム");
+        karaoke.setVisible(true);
     }
 
-    SoundGUI(){
+    Karaoke(){
         fileButton = new JButton("file select");
         playButton = new JButton("Play");
         stopButton = new JButton("Stop");
@@ -101,8 +109,10 @@ public final class SoundGUI extends JFrame implements ActionListener{
         spectrumPanel = new JPanel();
         globalPanel.setLayout(new BoxLayout(globalPanel, BoxLayout.PAGE_AXIS));
         monitorPanel.setLayout(new GridLayout(2,2));
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.add(fileButton);
+//        buttonPanel.add(playButton);
+//        playButton.setBounds(0,0,120,40);
 
         fileNameLabel = new JLabel();
         fileNameLabel.setText("ファイルを選択してください");
@@ -120,7 +130,8 @@ public final class SoundGUI extends JFrame implements ActionListener{
         globalPanel.add(monitorPanel);
         getContentPane().add(globalPanel, BorderLayout.CENTER);
     }
-    public void actionPerformed(ActionEvent event){
+    public void actionPerformed(ActionEvent event)
+            {
         if(event.getSource() == fileButton) {
             JFileChooser fileChooser = new JFileChooser();
 
@@ -137,6 +148,18 @@ public final class SoundGUI extends JFrame implements ActionListener{
                 monitorPanel.add(loading_label);
                 monitorPanel.add(loading_label);
 
+                try {
+                    player = Player.newPlayer(currentFile);
+                    Mixer.Info[] mixerInfo=AudioSystem.getMixerInfo();
+                    recorder = Recorder.newRecorder(16000.0 ,0.4,mixerInfo[3],new File("out_w.wav"));
+
+                    lyricsLabel = PlotScore.generateLyricsLabel(player);
+                    noteLabel = PlotPitch.generatePitchMonitorLabel();
+                    playCountLabel = PlotScore.generatePositionLabel();
+                }
+                catch(IOException | UnsupportedAudioFileException | javax.sound.sampled.LineUnavailableException e){
+
+                }
                 LoadSoundData(currentFile);
 
             } else if (selected == JFileChooser.CANCEL_OPTION) {
@@ -149,16 +172,8 @@ public final class SoundGUI extends JFrame implements ActionListener{
 //            if(!player.isRunning())
 //            player.stop();
 
-            try {
-                player = Player.newPlayer(currentFile);
-            }
-            catch(IOException | UnsupportedAudioFileException | javax.sound.sampled.LineUnavailableException e){
-
-            }
-            player.start();
             consolePanel.removeAll();
             consolePanel.add(stopButton);
-            consolePanel.add(playCountLabel);
 //            consolePanel.add(spectrumPanel);
 //            今後の拡張で実装予定の動的表示部分
             Thread thread = new Thread(new Runnable() {
@@ -184,9 +199,10 @@ public final class SoundGUI extends JFrame implements ActionListener{
             player.stop();
         }
     }
-    void LoadSoundData(File wavFile){
+    void LoadSoundData(File wavFile)
+    {
 		/* 音響信号読み込み */
-		try {
+        try {
             final AudioInputStream stream = AudioSystem
                     .getAudioInputStream(wavFile);
             final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
@@ -194,22 +210,37 @@ public final class SoundGUI extends JFrame implements ActionListener{
             final double sampleRate = format.getSampleRate();
             stream.close();
 
-            JFreeChart waveformChart = PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
-            JFreeChart spectrogramChart = PlotSpectrogram.GenerateSpectrogramChart(
-                    waveform, sampleRate, Le4MusicUtils.frameDuration, Le4MusicUtils.shiftDuration);
-            JFreeChart volumeChart = PlotVolume.GenerateLoudnessChart(waveform, sampleRate);
+            JFreeChart spectrogramChart =
+                    MonitorSpectrogram.GenerateSpectrogramMonitorChart(player);
+//                    PlotWaveform.GenerateWaveformChart(waveform, sampleRate);
+            JFreeChart pitchChart =
+                    PlotPitch.generatePitchRecorderMonitor(recorder);
+//                    MonitorSpectrogram.GenerateSpectrogramMonitorChart(player);
+
+//                    PlotSpectrogram.GenerateSpectrogramChart(
+//                    waveform, sampleRate, Le4MusicUtils.frameDuration, Le4MusicUtils.shiftDuration);
+//
+            JFreeChart volumeChart =
+                    MonitorRecorder.GenerateSpectrogramMonitorChart(recorder);
+//                    PlotVolume.GenerateLoudnessChart(waveform, sampleRate);
             monitorPanel.removeAll();
 
             consolePanel = new JPanel();
-            consolePanel.setLayout(null);
-            consolePanel.add(playButton);
-            playButton.setBounds(0,0,120,40);
+            noteLabel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+            lyricsLabel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            consolePanel.setLayout(new BorderLayout());
+            consolePanel.add(noteLabel,BorderLayout.CENTER);
+            consolePanel.add(lyricsLabel,BorderLayout.PAGE_END);
+            consolePanel.add(playCountLabel,BorderLayout.PAGE_START);
 
             monitorPanel.add(consolePanel);
-            monitorPanel.add(new ChartPanel(waveformChart));
             monitorPanel.add(new ChartPanel(spectrogramChart));
             monitorPanel.add(new ChartPanel(volumeChart));
+            monitorPanel.add(new ChartPanel(pitchChart));
 
+
+            player.start();
+            recorder.start();
             invalidate();
             validate();
         }
@@ -221,447 +252,503 @@ public final class SoundGUI extends JFrame implements ActionListener{
 \end{lstlisting}
 
 
-\subsection{SoundPlayer.java}
-再生機能を提供
-\begin{lstlisting}[caption=SoundPlayer.java,label=SoundPlayer]
-import jp.ac.kyoto_u.kuis.le4music.Player;
-import javax.sound.sampled.UnsupportedAudioFileException;
+\subsection{MonitorSpectrogram.java}
+レコーダーのスぺクトログラムを提供
+\begin{lstlisting}[caption=MonitorSpectrogram.java,label=MonitorSpectrogram]
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.Executors;
 import java.util.Arrays;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
-public class SoundPlayer {
+import javax.sound.sampled.Mixer;
 
-    static public void main(final String[] args) throws IOException, UnsupportedAudioFileException,javax.sound.sampled.LineUnavailableException
-
-    {
-        if (args.length == 0) {
-            System.out.println("no input files");
-            return;
-        }
-        File file = new File(args[0]);
-        Player player = Player.newPlayer(file);
-        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(
-                () -> {
-                    final double[] frame = player.latestFrame();
-                    final double rms = Math.sqrt(Arrays.stream(frame).map(x -> x * x).average().orElse(0.0));
-                    final double logRms = 20.0 * Math.log10(rms);
-                    System.out.printf("RMS %f dB%n", logRms);
-                },
-                0L, 100L, TimeUnit.MILLISECONDS
-        );
-        player.start();
-    }
-}
-\end{lstlisting}
-
-
-\subsection{PlotWaveform.java}
-波形出力を提供
-\begin{lstlisting}[caption=PlotWaveform.java,label=PlotWaveform]
-import java.io.File;
-import java.util.stream.IntStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.swing.JFrame;
-
-import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.axis.NumberAxis;
-import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.Plot;
-import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-public final class PlotWaveform {
-
-	/* 信号をプロットする */
-    public static final JFreeChart GenerateWaveformChart(
-            final double[] waveform,
-            final double sampleRate
-    ) {
-
-/*各サンプルの時刻を求める*/
-
-        final double[] times = IntStream.range(0, waveform.length).mapToDouble(i -> i / sampleRate).toArray();
-
-/*プロットする*/
-
-        final JFreeChart chart = ChartFactory.createXYLineChart(
-                null,null,null,new SingleXYArrayDataset(times, waveform));
-        chart.removeLegend();
-        chart.setTitle("Waveform");
-        final XYPlot plot = chart.getXYPlot();
-        final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-        xAxis.setRange(0.0, (waveform.length - 1) / sampleRate);
-        xAxis.setLabel("Time[sec.]");
-        final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-        yAxis.setRange(-1.0, 1.0);
-        yAxis.setLabel("Amplitude");
-        return chart;
-    }
-
-    public static final void main(final String[] args)
-            throws IOException, UnsupportedAudioFileException {
-
-        if (args.length == 0) {
-            System.out.println("no input files");
-            return;
-        }
-
-        final File wavFile = new File(args[0]);
-		/* 音響信号読み込み */
-        final AudioInputStream stream = AudioSystem
-               .getAudioInputStream(wavFile);
-        final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
-        final AudioFormat format = stream.getFormat();
-        final double sampleRate = format.getSampleRate();
-        stream.close();
-
-        final JFrame frame = Plot.createJFrame(GenerateWaveformChart(waveform, sampleRate),"plot");
-    }
-}
-\end{lstlisting}
-
-
-\subsection{PlotVolume.java}
-音量出力を提供
-\begin{lstlisting}[caption=PlotVolume.java,label=PlotVolume]
-import java.io.File;
-import java.util.Arrays;
-import java.util.stream.IntStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.swing.JFrame;
-
-import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.axis.NumberAxis;
-import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.Plot;
-
-import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-public final class PlotVolume {
-    /*波形をフーリエ変換し，スペクトルを対数(dB)スケールでプロットする*/
-
-    static int DIVIDE_SIZE = 1024;
-
-    //和を計算する
-    private static double getSigma(double[] spectrum){
-        return Arrays.stream(spectrum).map(c -> c * c).sum();
-    }
-
-    private static double getVokumeValue(final double[] waveform, final double sampleRate){
-         /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
-        final double[] src = Arrays.stream(Arrays.copyOf(waveform, DIVIDE_SIZE)).map(w -> w / waveform.length)
-                .toArray();
-         /*対数振幅スペクトルを求める*/
-        return 20.0 * Math.log10(Math.sqrt(getSigma(src) / DIVIDE_SIZE));
-    }
-
-    public static final JFreeChart GenerateLoudnessChart(final double[] waveform, final double sampleRate) {
-         /* fftSize = 2?p >= waveform.lengthを満たすfftSizeを求める * 2?pはシフト演算で求められる*/
-        final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-         /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
-        final double[] src = Arrays.stream(Arrays.copyOf(waveform, fftSize)).map(w -> w / waveform.length)
-                .toArray();
-        int divide_num = fftSize / DIVIDE_SIZE;
-        double[] loudness = new double[divide_num];
-        for(int i = 0; i < divide_num ;i++){
-            loudness[i] = getVokumeValue(Arrays.copyOfRange(src,i * DIVIDE_SIZE, (i + 1) * DIVIDE_SIZE),sampleRate);
-        }
-
-        /* フレーム数と各フレーム先頭位置の時刻*/
-        final double[] times = IntStream.range(0, loudness.length).mapToDouble(i -> i * DIVIDE_SIZE / sampleRate).toArray();
-
-         /*プロットする*/
-        final JFreeChart chart = ChartFactory.createXYLineChart(
-                null,null,null,new SingleXYArrayDataset(times, loudness));
-
-        chart.removeLegend();
-        chart.setTitle("Loudness");
-        final XYPlot plot = chart.getXYPlot();
-        final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-        xAxis.setRange(0.0, (waveform.length - 1) / sampleRate);
-        xAxis.setLabel("Time[sec.]");
-        final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-        yAxis.setRange(-220.0, -150.0);
-        yAxis.setLabel("Amplitude");
-        return chart;
-    }
-
-    public static final void main(final String[] args) throws IOException, UnsupportedAudioFileException
-
-    {
-        if (args.length == 0) {
-            System.out.println("no input files");
-            return;
-
-        }
-        final File wavFile = new File(args[0]);
-        /*音響信号読み込み*/
-        final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
-        final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
-        final AudioFormat format = stream.getFormat();
-        final double sampleRate = format.getSampleRate();
-        stream.close();
-        final JFrame frame = Plot.createJFrame(GenerateLoudnessChart(waveform, sampleRate),"plot");
-    }
-}
-\end{lstlisting}
-
-
-\subsection{PlotSpectrum.java}
-スペクトラム出力を提供
-\begin{lstlisting}[caption=PlotSpectrum.java,label=PlotSpectrum]
-import java.io.File;
-import java.util.Arrays;
-import java.util.stream.IntStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.swing.JFrame;
-
-import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
-import org.apache.commons.math3.complex.Complex;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.Plot;
-
-import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
-public final class PlotSpectrum {
-    /*波形をフーリエ変換し，スペクトルを対数(dB)スケールでプロットする*/
-
-    public static final JFreeChart GenerateSpectrumChart(final double[] waveform, final double sampleRate) {
-         /* fftSize = 2?p >= waveform.lengthを満たすfftSizeを求める * 2?pはシフト演算で求められる*/
-        final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-         /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
-        final double[] src = Arrays.stream(Arrays.copyOf(waveform, fftSize)).map(w -> w / waveform.length)
-                .toArray();
-         /*高速フーリエ変換を行う*/
-        final Complex[] spectrum = Le4MusicUtils.rfft(src);
-         /*対数振幅スペクトルを求める*/
-        final double[] specLog = Arrays.stream(spectrum)
-                .mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray();
-         /*周波数を求める．以下を満たすように線型に*freqs[0] = 0Hz 48 * freqs[fftSize2 - 1] = sampleRate / 2 (= Nyquist周波数) */
-        final double[] freqs = IntStream.rangeClosed(0, fftSize >> 1)
-                .mapToDouble(i -> i * sampleRate / fftSize).toArray();
-        return ChartFactory.createXYLineChart(
-                null,null,null,new SingleXYArrayDataset(freqs, specLog));
-    }
-
-    public static final void main(final String[] args) throws IOException, UnsupportedAudioFileException
-
-    {
-        if (args.length == 0) {
-            System.out.println("no input files");
-            return;
-
-        }
-        final File wavFile = new File(args[0]);
-        /*音響信号読み込み*/
-        final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
-        final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
-        final AudioFormat format = stream.getFormat();
-        final double sampleRate = format.getSampleRate();
-        stream.close();
-        final JFrame frame = Plot.createJFrame(GenerateSpectrumChart(waveform, sampleRate),"plot");
-
-    }
-}
-\end{lstlisting}
-
-
-\subsection{PlotSpectrogram.java}
-スぺクトログラム出力を提供
-\begin{lstlisting}[caption=PlotSpectrogram.java,label=PlotSpectrogram]
-import java.io.File;
-import java.util.Arrays;
-import java.util.stream.Stream;
-import java.util.stream.IntStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.swing.JFrame;
-
-import org.jfree.chart.JFreeChart;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.util.MathArrays;
+
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.general.DatasetChangeEvent;
+
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.Plot;
+import jp.ac.kyoto_u.kuis.le4music.Player;
+import jp.ac.kyoto_u.kuis.le4music.ColorMapIntARGB;
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.LineUnavailableException;
+import javax.swing.*;
 
-public final class PlotSpectrogram {  /*波形を短時間フーリエ変換し，スペクトログラムをプロットする*/
+import org.apache.commons.cli.ParseException;
 
-    public static final JFreeChart GenerateSpectrogramChart(
-            final double[] waveform,
-            final double sampleRate,
-            final double windowDuration,
-            final double windowShift) {
-         /* 窓関数とFFTのサンプル数 */
-        final int windowSize = (int) Math.round(windowDuration * sampleRate);
-        final int fftSize = 1 << Le4MusicUtils.nextPow2(windowSize);
-         /* シフトのサンプル数 */
-        final int shiftSize = (int) Math.round(windowShift * sampleRate);
-         /* 窓関数を求め，それを正規化する*/
+public final class MonitorSpectrogram {
 
-        final double[] window = MathArrays.normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(windowSize), fftSize), 1.0);
-         /* 各フーリエ変換係数に対応する周波数*/
-        final double[] freqs = IntStream.rangeClosed(0, fftSize / 2)
-                .mapToDouble(i -> i * sampleRate / fftSize).toArray();
-         /*短時間フーリエ変換本体*/
-        final Stream<Complex[]> spectrogram =
-                Le4MusicUtils.sliding(waveform, window, shiftSize).map(frame -> Le4MusicUtils.rfft(frame));
-         /*複素スペクトログラムを対数振幅スペクトログラムに */
-        final double[][] specLog =
-                spectrogram.map(sp -> Arrays.stream(sp)
-                        .mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray()).toArray(n -> new double[n][]);
-        /* フレーム数と各フレーム先頭位置の時刻*/
-        final double[] times = IntStream.range(0, specLog.length)
-                .mapToDouble(i -> i * windowShift).toArray();
-         /* プロット*/
-
-         JFreeChart chart = ChartGenerator.chartGenerate(specLog, times, freqs, "Time [sec.]", "Frequency [Hz]", -100.0, 0.0, true);
-         chart.setTitle("Spectrogram");
-         return chart;
+    public static final class Default {
+        public static final double duration = 5.0;   /* seconds */
+        public static final double freqMax = 4000.0; /* Hz */
+        public static final double specLogMin = -100.0;
+        public static final double specLogMax = 0.0;
     }
 
-    public static final void main(final String[] args) throws IOException, UnsupportedAudioFileException
+    private static final class OnlineSpectrogramPlot extends XYPlot {
 
-    {
-        if (args.length == 0) {
-            System.out.println("no input files");
-            return;
+        private static final long serialVersionUID = 3023546826798901921L;
 
+        private final DatasetChangeEvent event = new DatasetChangeEvent(this, null);
+
+        private final int frames;
+        private final int bins;
+        private final ColorMapIntARGB colormap;
+
+        private final BufferedImage image;
+        private final int[] dataElements;
+
+        private OnlineSpectrogramPlot(
+                final NumberAxis timeAxis,
+                final NumberAxis freqAxis,
+                final int frames,
+                final int bins,
+                final ColorMapIntARGB colormap
+        ) {
+            super(
+        /* dataset    = */ null,
+        /* domainAxis = */ timeAxis,
+        /* rangeAxis  = */ freqAxis,
+        /* renderer   = */ null
+            );
+            this.frames = frames;
+            this.bins = bins;
+            this.colormap = colormap;
+            this.image = new BufferedImage(
+        /* width      = */ frames,
+        /* height     = */ bins,
+        /* imageType  = */ BufferedImage.TYPE_INT_ARGB
+            );
+            this.dataElements = new int[frames * bins];
+
+            setDataset(new DefaultXYDataset()); /* render() ã‚’å‘¼ã³å‡ºã•ã›ã‚‹ãŸã‚ã®ãƒ€ãƒŸãƒ¼ */
         }
-        final File wavFile = new File(args[0]);
-        /* 音響信号読み込み */
-        final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile);
-        final AudioFormat format = stream.getFormat();
-        final double sampleRate = format.getSampleRate();
-        final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
-        stream.close();
 
-        final JFrame frame = Plot.createJFrame(GenerateSpectrogramChart(waveform, sampleRate, Le4MusicUtils.frameDuration, Le4MusicUtils.shiftDuration),"plot");
-    }
-}
-\end{lstlisting}
-
-
-\subsection{ChartGenerator.java}
-チャート出力を提供
-\begin{lstlisting}[caption=ChartGenerator.java,label=ChartGenerator]
-import jp.ac.kyoto_u.kuis.le4music.HotPaintScale;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.data.xy.MatrixSeries;
-import org.jfree.data.xy.MatrixSeriesCollection;
-
-//Chartを生成するクラス。
-public class ChartGenerator {
-
-    private static final MatrixSeries buildMatrixSeries(
-            final double[][] z,
-            final int size1,
-            final int size2,
-            final boolean transpose
-    ) {
-        MatrixSeries ms;
-        if (!transpose) {
-            ms = new MatrixSeries("", size1, size2);
-            for (int i = 0; i < size1; i++)
-                for (int j = 0; j < size2; j++)
-                    ms.update(i, j, z[i][j]);
-        } else {
-            ms = new MatrixSeries("", size2, size1);
-            for (int i = 0; i < size1; i++)
-                for (int j = 0; j < size2; j++)
-                    ms.update(j, i, z[i][j]);
+        public final void addSpectrum(final Complex[] spectrum) {
+            final int[] specImg = Arrays.stream(spectrum)
+                    .limit(bins)
+                    .mapToDouble(Complex::abs)
+                    .map(x -> 20.0 * Math.log10(x))
+                    .mapToInt(colormap::map)
+                    .toArray();
+            for (int i = 0; i < bins; i++) {
+                System.arraycopy(dataElements, (i * frames) + 1,
+                        dataElements, (i * frames) + 0,
+                        frames - 1);
+                dataElements[(i * frames) + frames - 1] = specImg[bins - 1 - i];
+            }
+            datasetChanged(event); /* render() ã‚’å‘¼ã³å‡ºã™ */
         }
-        return ms;
+
+        @Override /* XYPlot */
+        public final boolean render(
+                final Graphics2D g2,
+                final Rectangle2D dataArea,
+                final int index,
+                final org.jfree.chart.plot.PlotRenderingInfo info,
+                final org.jfree.chart.plot.CrosshairState crosshairState
+        ) {
+            image.getRaster().setDataElements(
+        /* x = */ 0,
+        /* y = */ 0,
+        /* w = */ frames,
+        /* h = */ bins,
+        /* inData = */ dataElements
+            );
+            return g2.drawImage(
+        /* img   = */ image,
+        /* xform = */ new AffineTransform(
+          /* m00 = */ dataArea.getWidth() / frames,
+          /* m10 = */ 0.0,
+          /* m01 = */ 0.0,
+          /* m11 = */ dataArea.getHeight() / bins,
+          /* m02 = */ dataArea.getX(),
+          /* m12 = */ dataArea.getY()
+                    ),
+        /* obs   = */ null
+            );
+        }
+
     }
 
-    public static final JFreeChart chartGenerate(
-            final double[][] z,
-            final double[] x,
-            final double[] y,
-            final String xAxisTitle,
-            final String yAxisTitle,
-            final double zMin,
-            final double zMax,
-            final boolean transpose
-    ) {
-        final int size1 = x.length;
-        final int size2 = y.length;
-        final MatrixSeries ms = buildMatrixSeries(z, size1, size2, transpose);
-        final MatrixSeriesCollection msc = new MatrixSeriesCollection(ms);
+    public static JFreeChart GenerateSpectrogramMonitorChart(Player player)
+            throws IOException,
+            UnsupportedAudioFileException
+             {
 
-    /* プロットの軸 */
-        final NumberAxis axis1a = new NumberAxis(xAxisTitle + "-index");
-        axis1a.setLowerMargin(0.0);
-        axis1a.setUpperMargin(0.0);
+        final double frameDuration = Le4MusicUtils.frameDuration;
+    /* シフト長＝フレーム長の8分の1 */
+        final double shiftDuration = frameDuration / 8.0;
+        final double duration = Default.duration;
+        final double freqMax = Default.freqMax * 2;
 
-        final NumberAxis axis2a = new NumberAxis(yAxisTitle + "-index");
-        axis2a.setLowerMargin(0.0);
-        axis2a.setUpperMargin(0.0);
+        final int frames = (int)(duration / shiftDuration);
 
-        final NumberAxis axis1b = new NumberAxis(xAxisTitle);
-        axis1b.setLowerBound(x[0]);
-        axis1b.setUpperBound(x[size1 - 1]);
+        final int fftSize = 1 << Le4MusicUtils.nextPow2(player.getFrameSize());
+        final int bins = (int)(fftSize * freqMax / player.getSampleRate());
+        final double[] window =
+                MathArrays.normalizeArray(Le4MusicUtils.hanning(player.getFrameSize()), 1.0);
 
-        final NumberAxis axis2b = new NumberAxis(yAxisTitle);
-        axis2b.setLowerBound(y[0]);
-        axis2b.setUpperBound(y[size2 - 1]);
+        final NumberAxis timeAxis = new NumberAxis("Time-index");
+        timeAxis.setLowerMargin(0.0);
+        timeAxis.setUpperMargin(0.0);
 
-    /* レンダラ（値と色の対応関係） */
-        final XYBlockRenderer renderer = new XYBlockRenderer();
-        renderer.setPaintScale(new HotPaintScale(zMin, zMax));
+        final NumberAxis freqAxis = new NumberAxis("Frequency-index");
+        freqAxis.setLowerMargin(0.0);
+        freqAxis.setUpperMargin(0.0);
 
-    /* JFreeChartの軸表示に関するバグへの対策 */
-        final XYPlot plot = new XYPlot(msc, axis1a, axis2a, renderer);
+        final NumberAxis timeAxis1 = new NumberAxis("Time [sec.]");
+        timeAxis1.setLowerBound((-frames + 1) * shiftDuration);
+        timeAxis1.setUpperBound(0.0);
+
+        final NumberAxis freqAxis1 = new NumberAxis("Frequency [Hz]");
+        freqAxis1.setLowerBound(0.0);
+        freqAxis1.setUpperBound(freqMax);
+
+        final NumberAxis freqAxis2 = new NumberAxis("Frequency [Hz]");
+        freqAxis2.setLowerBound(0.0);
+        freqAxis2.setUpperBound(freqMax);
+
+        final ColorMapIntARGB colormap =
+                Le4MusicUtils.hotColorMap(Default.specLogMin, Default.specLogMax);
+        final OnlineSpectrogramPlot spgPlot =
+                new OnlineSpectrogramPlot(timeAxis, freqAxis, frames, bins, colormap);
         final String axisType = "NORMAL"; /* NORMAL | INDEX | BOTH */
         switch (axisType) {
             case "INDEX":
                 break;
             case "BOTH":
-                plot.setDomainAxis(1, axis1b);
-                plot.setDomainAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
-                plot.setRangeAxis(1, axis2b);
-                plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
+                spgPlot.setDomainAxis(1, timeAxis1);
+                spgPlot.setDomainAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
+                spgPlot.setRangeAxis(1, freqAxis1);
+                spgPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
                 break;
             case "NORMAL":
-                plot.setDomainAxis(1, axis1b);
-                plot.setDomainAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
-                plot.setRangeAxis(1, axis2b);
-                plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
-                plot.getDomainAxis().setVisible(false);
-                plot.getRangeAxis().setVisible(false);
+                spgPlot.setDomainAxis(1, timeAxis1);
+                spgPlot.setDomainAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
+                spgPlot.setRangeAxis(1, freqAxis1);
+                spgPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
+                spgPlot.getDomainAxis().setVisible(false);
+                spgPlot.getRangeAxis().setVisible(false);
                 break;
         }
 
-        final JFreeChart chart = new JFreeChart(plot);
-        chart.removeLegend();
-        return chart;
+        final JFreeChart spgChart = new JFreeChart(spgPlot);
+        spgChart.removeLegend();
+
+
+        final ScheduledExecutorService executor =
+                Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
+                () -> {
+                    final double[] frame = player.latestFrame();
+                    final double[] wframe = MathArrays.ebeMultiply(frame, window);
+                    final Complex[] spectrum = Le4MusicUtils.rfft(Arrays.copyOf(wframe, fftSize));
+                    spgPlot.addSpectrum(spectrum);
+
+        /* Playerの再生停止に合わせて描画も停止 */
+                    if (!player.isOpen()) executor.shutdown();
+                },
+      /* initialDelay = */ 0L,
+      /* period       = */ (long)(shiftDuration * 1000000),
+                TimeUnit.MICROSECONDS
+        );
+        SwingUtilities.invokeLater(player::start);
+        return spgChart;
+    }
+
+    public final void run(final String[] args)
+            throws IOException,
+            ParseException,
+            UnsupportedAudioFileException,
+            LineUnavailableException {
+
+
+    /* ウィンドウ描画がひと通り完了してから再生を開始する */
+//        SwingUtilities.invokeLater(player::start);
+    }
+
+    public static final void main(final String[] args)
+            throws IOException,
+            ParseException,
+            UnsupportedAudioFileException,
+            LineUnavailableException {
+        new MonitorSpectrogram().run(args);
+    }
+
+}
+\end{lstlisting}
+
+\subsection{PlotPitch.java}
+音高抽出機能を提供
+\begin{lstlisting}[caption=PlotPitch.java,label=PlotPitch]
+import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
+import jp.ac.kyoto_u.kuis.le4music.Plot;
+import jp.ac.kyoto_u.kuis.le4music.Recorder;
+import jp.ac.kyoto_u.kuis.le4music.SingleXYArrayDataset;
+import org.apache.commons.math3.complex.Complex;
+import org.apache.commons.math3.complex.ComplexUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYDataset;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
+
+import static java.lang.Math.abs;
+import static jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils.sampleRate;
+
+/**
+ * Created by a-rusi on 2017/01/12.
+ */
+public class PlotPitch {
+    static double pitchValue;
+    static boolean isPlotPitch= false;
+    static public double getPitch(final double[] frame) {
+
+        /* fftSize = 2ˆp >= waveform.lengthを満たすfftSizeを求める * 2ˆpはシフト演算で求められる*/
+        final int fftSize = 1 << Le4MusicUtils.nextPow2(frame.length);
+        /* 信号の長さをfftSizeに伸ばし，長さが足りない部分は0で埋める．  *振幅を信号長で正規化する． */
+        final double[] src = Arrays.stream(Arrays.copyOf(frame, fftSize)).map(w -> w / frame.length)
+                .toArray();
+        final Complex[] ffted_array = Le4MusicUtils.rfft(src);
+        Complex[] powed = ComplexUtils.convertToComplex(Arrays.stream(ffted_array).mapToDouble(i -> i.abs() * i.abs()).toArray());
+        double[] irffted_array = Le4MusicUtils.irfft(powed);
+
+        int peak_max = 0;
+        boolean initialized = false;
+
+        double[] data = irffted_array;
+
+        ArrayList<Double> peakVals = new ArrayList<Double>();
+        ArrayList<Integer> peakIndex= new ArrayList<Integer>();
+        for(int i = 2;i < (data.length / 2);i++){
+            if(data[i - 1] - data[i - 2] >= 0 && data[i] - data[i-1] < 0){
+                peakVals.add(data[i - 1]);
+                peakIndex.add(i);
+            }
+        }
+        if(peakIndex.size() == 0){
+            return 0;
+        }
+        else {
+            return Le4MusicUtils.sampleRate / (peakIndex.get(peakVals.indexOf(Collections.max(peakVals)))-1);
+        }
+
+//
+//        for(int i = 1;i < irffted_array.length - 1 ; i++){
+//            if(irffted_array[i - 1] < irffted_array[i] &&
+//                    irffted_array[i] > irffted_array[i + 1]) {
+//                if(!initialized){
+//                    initialized = true;
+//                }
+//                else if(peak_max == 0){
+//                     peak_max = i;
+//                }
+//                else if(irffted_array[peak_max] < irffted_array[i])
+//                    peak_max = i;
+//            }
+//        }
+//        if(peak_max == 0)
+//            return 0;
+//        return Le4MusicUtils.sampleRate / peak_max;
+    }
+    static public String getNote(double pitch){
+        double noteValue[] = {4186.0,
+                3951.1, 3729.3, 3520.0, 3322.4, 3136.0, 2960.0, 2793.8, 2637.0, 2489.0, 2349.3, 2217.5, 2093.0,
+                1975.5, 1864.7, 1760.0, 1661.2, 1568.0, 1480.0, 1396.9, 1318.5, 1244.5, 1174.7, 1108.7, 1046.5,
+                987.77, 932.33, 880.00, 830.61, 783.99, 739.99, 698.46, 659.26, 622.25, 587.33, 554.37, 523.25,
+                493.88, 466.16, 440.00, 415.30, 392.00, 369.99, 349.23, 329.63, 311.13, 293.66, 277.18, 261.63,
+                246.94, 233.08, 220.00, 207.65, 196.00, 185.00, 174.61, 164.81, 155.56, 146.83, 138.59, 130.81,
+                123.47, 116.54, 110.00, 103.83, 97.999, 92.499, 87.307, 82.407, 77.782, 73.416, 69.296, 65.406,
+                61.735, 58.270, 55.000, 51.913, 48.999, 46.249, 43.654, 41.203, 38.891, 36.708, 34.648, 32.703,
+                30.868, 29.135, 27.500
+        };
+        String note_name[] = {"B","A#","A","G#","G","F#","F","E","D#","D","C#","C"};
+        if(pitch > noteValue[0]) return "C8";
+        for(int i = 1,oct = 7,counter = 0;i < noteValue.length;i++){
+            if(noteValue[i] < pitch){
+                return note_name[counter] + Integer.toString(oct);
+            }
+            counter++;
+            if(counter == 12) {
+                oct--;
+                counter = 0;
+            }
+        }
+        return "none";
+    }
+    static public JLabel generatePitchMonitorLabel(){
+        JLabel noteMonitorLabel = new JLabel();
+        noteMonitorLabel.setFont(new Font("ＭＳ ゴシック", Font.BOLD ,64));
+        final ScheduledExecutorService executor =
+                Le4MusicUtils.newSingleDaemonThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
+                () -> {
+                    if(isPlotPitch)
+                        noteMonitorLabel.setText(getNote(pitchValue));
+                },
+        /* initialDelay = */ 0L,
+        /* delay = */ 1L,
+                TimeUnit.MILLISECONDS
+        );
+        return noteMonitorLabel;
+    }
+    static public JFreeChart generatePitchRecorderMonitor(Recorder recorder){
+        final JFreeChart wfChart = ChartFactory.createXYLineChart(
+      /* title      = */ "Pitch",
+      /* xAxisLabel = */ "Time (sec)",
+      /* yAxisLabel = */ "Amplitude",
+      /* dataset    = */ null
+        );
+        wfChart.removeLegend();
+        final XYPlot wfPlot = wfChart.getXYPlot();
+        wfPlot.getDomainAxis().setRange(-recorder.getFrameDuration(), 0.0);
+        wfPlot.getRangeAxis().setRange(0, 1200.0);
+
+    /* 時間軸 */
+        final double[] times =
+                IntStream.rangeClosed(- recorder.getFrameSize() + 1, 0)
+                        .mapToDouble(i -> i / recorder.getSampleRate())
+                        .toArray();
+        final double [] stock= IntStream.rangeClosed(- recorder.getFrameSize() + 1, 0)
+                .mapToDouble(i -> 0)
+                .toArray();
+
+        final ScheduledExecutorService executor =
+                Le4MusicUtils.newSingleDaemonThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
+                () -> {
+                    if (!recorder.isUpdated()) return;
+        /* 最新フレームの波形を描画 */
+                    int speed = 32;
+                    for(int i = 0;i < stock.length - speed;i++){
+                        stock[i] =stock[i + speed];
+                    }
+                    pitchValue = getPitch((recorder.latestFrame()));
+                    isPlotPitch = PlotVolume.getVolumeValue(recorder.latestFrame()) > -120;
+                    for(int i = 0;i < speed;i++)
+                        stock[stock.length - speed + i] = pitchValue;
+
+                    final XYDataset wfDataset = new SingleXYArrayDataset(times, stock);
+                    wfPlot.setDataset(wfDataset);
+                },
+        /* initialDelay = */ 0L,
+        /* delay = */ 1L,
+                TimeUnit.MILLISECONDS
+        );
+        SwingUtilities.invokeLater(recorder::start);
+        return wfChart;
+    }
+    static public void main(final String[] args)
+        throws IOException ,
+            UnsupportedAudioFileException ,
+            javax.sound.sampled.LineUnavailableException{
+        Mixer.Info[] mixerInfo= AudioSystem.getMixerInfo();
+        Recorder recorder = Recorder.newRecorder(16000.0 ,0.4,mixerInfo[3],new File("out_w.wav"));
+        Plot.createJFrame(generatePitchRecorderMonitor(recorder));
+        recorder.start();
+    }
+}
+\end{lstlisting}
+
+\subsection{PlotScore.java}
+歌詞機能を提供
+\begin{lstlisting}[caption=PlotScore.java,label=PlotScore]
+import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
+import jp.ac.kyoto_u.kuis.le4music.Player;
+
+import javax.swing.*;
+import java.awt.Font;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+public class PlotScore {
+    static int position = 0;
+    private static class ScorePack{
+        public int startTime;
+        public String showWords;
+        public void init(int time, String words){
+            startTime = time;
+            showWords = words;
+        }
+        public ScorePack(){
+            startTime = -1;
+        }
+    }
+    static public JLabel generatePositionLabel(){
+        JLabel postion_label = new JLabel();
+        final ScheduledExecutorService executor =
+                Le4MusicUtils.newSingleDaemonThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
+                () -> {
+                    postion_label.setText(Integer.toString(position));
+                },
+        /* initialDelay = */ 0L,
+        /* delay = */ 1L,
+                TimeUnit.MILLISECONDS
+        );
+        return postion_label;
+    }
+    static public JLabel generateLyricsLabel(Player player){
+        ScorePack[] pack = new ScorePack[32];
+        for(int i = 0;i < pack.length;i++){
+            pack[i] = new ScorePack();
+        }
+        pack[0].init(0,"あああああ");
+        pack[1].init(20000,"いいいいい");
+        pack[1].init(40000,"う");
+        pack[1].init(80000,"おおおお");
+        pack[1].init(160000,"かかか");
+        JLabel lyrics_label = new JLabel();
+        final ScheduledExecutorService executor =
+                Le4MusicUtils.newSingleDaemonThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(
+                () -> {
+                    if (!player.isUpdated()) return;
+                    int target_pack = 0;
+                    for(int i = 0;i < pack.length;i++){
+                        if(player.position() > pack[i].startTime)
+                            if(pack[target_pack].startTime < pack[i].startTime)
+                                target_pack = i;
+                    }
+                    position = player.position();
+                    lyrics_label.setText(pack[target_pack].showWords);
+                },
+        /* initialDelay = */ 0L,
+        /* delay = */ 1L,
+                TimeUnit.MILLISECONDS
+        );
+        lyrics_label.setFont(new Font("游明朝", Font.BOLD ,24));
+        return lyrics_label;
+    }
+    static public void main(){
+
     }
 }
 \end{lstlisting}
@@ -669,22 +756,16 @@ public class ChartGenerator {
 \section{使い方}
 \subsection{ファイルを開く}
 左上の「file select」をクリックして、開きたいファイルを選択する。
-\subsection{ファイルを再生する}
-「file select」の下にある「Play」をクリック
+ファイルは自動的に再生される。
 \subsection{各ウィンドウの説明}
-\subsubsection{Waveform}
-波形を表示します
-\subsubsection{Spectrogram}
-スぺクトログラムを表示します
-\subsubsection{Loudness}
-ボリュームを表示します
-
-\section{実験}
-\subsection{実験内容}
-「あ、い、う、え、お」
-と発音された音声ファイルを読み込ませ、その波形やスペクトログラムを観察する。
-\subsection{結果}
-以下のような出力が得られた
+\subsubsection{左上 コンソール}
+歌詞およびノート名を表示する
+\subsubsection{左下 レコーダースぺクトログラム}
+レコーダーの入力をスぺクトログラム表示する
+\subsubsection{右上 プレイヤースぺクトログラム}
+音楽プレイヤーの出力をスぺクトログラム表示する
+\subsubsection{右下 レコーダーピッチ}
+レコーダーのピッチを表示します
 
 \begin{center}
 \includegraphics[width=18cm]{window.jpg}
